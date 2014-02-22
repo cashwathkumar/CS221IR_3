@@ -49,6 +49,7 @@ public class Indexer {
 		String docIdStr = null;
 		long docLength = 0;
 		int docId = 0;
+		int position = 0;
 		
 		while((line = in.readLine()) != null)
 		{
@@ -62,13 +63,12 @@ public class Indexer {
 				url = in.readLine();
 				in.readLine();	// unwanted info
 				in.readLine();	// unwanted info
+				position = 0;
 			}
 			else 
 			{
 				tokens = line.split("[ ]+");
 				docLength += tokens.length;
-				
-				int position = 0;
 				
 				for(String token : tokens)
 				{
