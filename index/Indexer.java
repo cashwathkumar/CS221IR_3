@@ -1,8 +1,10 @@
 package index;
 
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 
 public class Indexer {
@@ -14,12 +16,31 @@ public class Indexer {
 	
 	public static void main(String args[]) throws IOException
 	{
-		ReadFromFile();
+		readFromFile();
 		
-		
+		serializeToOutput();
 	}
 	
-	public static void ReadFromFile() throws IOException
+	private static void serializeToOutput() throws IOException
+	{
+		FileOutputStream wOut = new FileOutputStream("Windex.txt");
+		FileOutputStream uOut = new FileOutputStream("Uindex.txt");
+		
+		ObjectOutputStream oOut = new ObjectOutputStream(wOut);
+		
+		oOut.writeObject(wordIndex);
+		
+		oOut = new ObjectOutputStream(uOut);
+		
+		oOut.writeObject(urlIndex);
+		
+		oOut.close();
+		
+		wOut.close();
+		uOut.close();	
+	}
+	
+	private static void readFromFile() throws IOException
 	{
 		BufferedReader in = new BufferedReader(new FileReader("IRdata.txt"));
 		String line;
