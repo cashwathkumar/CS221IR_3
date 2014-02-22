@@ -19,7 +19,28 @@ public class Indexer {
 	{
 		readFromFile();
 		
-		serializeToOutput();
+		String[] words={"Eppstein","Computer","words","retrieval","Fall"};
+		
+		
+		for(String w:words)
+		{
+			System.out.println("=====================");
+			System.out.println(" looking up word"+w);
+			
+			Payload p=wordIndex.get(w);
+			if(p!=null)
+			{
+				System.out.println("idf="+p.idf);
+
+				System.out.println("frequency of word="+p.totalFreq);
+				System.out.println("*********************");
+			}
+			else
+				System.out.println("nothin.....");
+		}
+		
+		
+		//serializeToOutput();
 	}
 	
 	private static void serializeToOutput() throws IOException
@@ -43,7 +64,7 @@ public class Indexer {
 	
 	private static void readFromFile() throws IOException
 	{
-		BufferedReader in = new BufferedReader(new FileReader("IRdata.txt"));
+		BufferedReader in = new BufferedReader(new FileReader("C:\\Users\\SAISUNDAR\\Google Drive\\UCI related folders\\IR CS221_\\new run multithreaded\\IRdata.txt"));
 		String line;
 		String[] tokens;
 		String url = "";
@@ -55,8 +76,10 @@ public class Indexer {
 		
 		while((line = in.readLine()) != null)
 		{
+			
 			if(line.equals(delimiter))
 			{
+				//System.out.println(line);
 				addToURLIndex(docIdStr, new UrlInfo(url, docLength));
 				docLength = 0;
 				docIdStr = in.readLine();
@@ -71,6 +94,7 @@ public class Indexer {
 			}
 			else 
 			{
+				//System.out.println(line);
 				tokens = line.split("[ ]+");
 				docLength += tokens.length;
 				
@@ -122,5 +146,7 @@ public class Indexer {
 		payload.incrementTFreq();
 		
 		payload.updateDoc(docId, pos);
+		
+		wordIndex.put(token, payload);
 	}
 }

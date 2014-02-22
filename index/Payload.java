@@ -1,21 +1,25 @@
 package index;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Payload {
 	
 	ArrayList<DocInfo> docList;
-	
+	int currId;
+	int docPos;
+	//HashMap<Integer,DocInfo> docList;
 	long totalFreq;
 	
 	double idf;
 	
 	Payload()
 	{
-		docList = new ArrayList<DocInfo>();
-		
+		//docList = new ArrayList<DocInfo>();
+		docList= new ArrayList<DocInfo>();
 		totalFreq = 0;
-		
+		currId=-1;
+		docPos=-1;
 		idf = 0.0;
 	}
 	
@@ -31,25 +35,23 @@ public class Payload {
 	
 	public void updateDoc(int docId, int pos)
 	{
-		
-		for(DocInfo doc : docList)
+		DocInfo	doc=null;
+		if(docId==currId)
 		{
-			if(doc.docId == docId)
-			{
-				doc.incrementFreq();
-				
-				doc.addPos(pos);
-				
-				return;
-			}
+			doc=docList.get(docPos);
+			doc.incrementFreq();
+			doc.addPos(pos);
+			docList.add(docPos,doc);
+			return;
 		}
+			
+		doc = new DocInfo(docId);
+		doc.incrementFreq();
+		doc.addPos(pos);
+		docList.add(doc);
+		currId=docId;
+		docPos=docList.size()-1;
 		
-		DocInfo newDoc = new DocInfo(docId);
-		
-		newDoc.incrementFreq();
-		newDoc.addPos(pos);
-		
-		docList.add(newDoc);
 	}
 	
 	public int getDocPos(int docId)
