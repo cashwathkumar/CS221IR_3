@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
+import java.util.Set;
 
 public class Indexer {
 	
@@ -23,8 +24,8 @@ public class Indexer {
 	
 	private static void serializeToOutput() throws IOException
 	{
-		FileOutputStream wOut = new FileOutputStream("Windex.txt");
-		FileOutputStream uOut = new FileOutputStream("Uindex.txt");
+		FileOutputStream wOut = new FileOutputStream("Windex");
+		FileOutputStream uOut = new FileOutputStream("Uindex");
 		
 		ObjectOutputStream oOut = new ObjectOutputStream(wOut);
 		
@@ -50,6 +51,7 @@ public class Indexer {
 		long docLength = 0;
 		int docId = 0;
 		int position = 0;
+		int totalNoDoc = 0;
 		
 		while((line = in.readLine()) != null)
 		{
@@ -64,6 +66,8 @@ public class Indexer {
 				in.readLine();	// unwanted info
 				in.readLine();	// unwanted info
 				position = 0;
+				
+				totalNoDoc++;
 			}
 			else 
 			{
@@ -81,6 +85,17 @@ public class Indexer {
 		}
 		
 		addToURLIndex(docIdStr, new UrlInfo(url, docLength)); //add the final read url to index
+		
+		/* Calculate idf for all words */
+		Set<String> wordSet = wordIndex.keySet();
+		
+		for(String word : wordSet)
+		{
+			Payload payload = wordIndex.get(word);
+			long noOfDoc = payload.getNumberofDoc();
+			
+			payload.setIDF((double)noOfDoc/totalNoDoc);
+		}
 		
 		in.close();
 	}

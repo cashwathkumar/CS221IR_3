@@ -52,6 +52,25 @@ public class Payload {
 		docList.add(newDoc);
 	}
 	
+	public int getDocPos(int docId)
+	{
+		int pos;
+		
+		for(pos = 0; pos < docList.size(); pos++)
+		{
+			DocInfo doc = docList.get(pos);
+			if(doc.docId == docId)
+				break;
+		}
+		
+		return pos;
+	}
+	
+	public long getNumberofDoc()
+	{
+		return docList.size();
+	}
+	
 	private class DocInfo
 	{
 		int docId;
@@ -63,6 +82,7 @@ public class Payload {
 		{
 			this.docId = docId;
 			pos = new ArrayList<Integer>();
+			freq = 0;
 		}
 		
 		public void incrementFreq()
