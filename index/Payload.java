@@ -1,14 +1,14 @@
 package index;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 
-public class Payload {
+public class Payload implements Serializable{
 	
 	ArrayList<DocInfo> docList;
 	int currId;
 	int docPos;
-	//HashMap<Integer,DocInfo> docList;
+	static final long serialVersionUID=1;
 	long totalFreq;
 	
 	double idf;
@@ -41,7 +41,7 @@ public class Payload {
 			doc=docList.get(docPos);
 			doc.incrementFreq();
 			doc.addPos(pos);
-			docList.add(docPos,doc);
+		//	docList.set(docPos,doc);
 			return;
 		}
 			
@@ -53,7 +53,7 @@ public class Payload {
 		docPos=docList.size()-1;
 		
 	}
-	
+		
 	public int getDocPos(int docId)
 	{
 		int pos;
@@ -73,29 +73,5 @@ public class Payload {
 		return docList.size();
 	}
 	
-	private class DocInfo
-	{
-		int docId;
-		long freq;
-		
-		ArrayList<Integer> pos;
-		
-		DocInfo(int docId)
-		{
-			this.docId = docId;
-			pos = new ArrayList<Integer>();
-			freq = 0;
-		}
-		
-		public void incrementFreq()
-		{
-			freq++;
-		}
-		
-		public void addPos(int pos)
-		{
-			this.pos.add(pos);
-		}
-	}
-
+	
 }

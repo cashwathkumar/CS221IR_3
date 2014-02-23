@@ -11,7 +11,7 @@ import java.util.Set;
 public class Indexer {
 	
 	static HashMap<String, Payload> wordIndex = new HashMap<String, Payload>();
-	static HashMap<String, UrlInfo> urlIndex = new HashMap<String, UrlInfo>();
+	static HashMap<Integer, UrlInfo> urlIndex = new HashMap<Integer, UrlInfo>();
 	
 	public static final String delimiter = "!@#$%^&*()_+";
 	
@@ -19,13 +19,13 @@ public class Indexer {
 	{
 		readFromFile();
 		
-		String[] words={"Eppstein","Computer","words","retrieval","Fall"};
+		String[] words={"eppstein","computer","words","retrieval","fall","xianghua"};
 		
 		
 		for(String w:words)
 		{
 			System.out.println("=====================");
-			System.out.println(" looking up word"+w);
+			System.out.println(" looking up word \" "+w+"\"");
 			
 			Payload p=wordIndex.get(w);
 			if(p!=null)
@@ -33,14 +33,27 @@ public class Indexer {
 				System.out.println("idf="+p.idf);
 
 				System.out.println("frequency of word="+p.totalFreq);
+				System.out.println("some of the urls where word occurs....");
+				int count=4;
+				for(DocInfo temp:p.docList)
+				{
+					if(count--==0)break;
+					
+					System.out.println(" =========== url +++ \""+(urlIndex.get(temp.docId).getUrl())+"\"");
+					System.out.println("================ freq of word within url + "+temp.freq);
+				}
+				
+				
 				System.out.println("*********************");
 			}
 			else
 				System.out.println("nothin.....");
 		}
 		
+		System.out.println("Size of word index="+wordIndex.size());
+		System.out.println("Size of URL index "+urlIndex.size());
 		
-		//serializeToOutput();
+		serializeToOutput();
 	}
 	
 	private static void serializeToOutput() throws IOException
@@ -80,12 +93,13 @@ public class Indexer {
 			if(line.equals(delimiter))
 			{
 				//System.out.println(line);
-				addToURLIndex(docIdStr, new UrlInfo(url, docLength));
+				
 				docLength = 0;
 				docIdStr = in.readLine();
 				docIdStr = docIdStr.substring(6);	// 6 - position to extract docid
 				docId = Integer.parseInt(docIdStr);
 				url = in.readLine();
+				addToURLIndex(docId, new UrlInfo(url, docLength));
 				in.readLine();	// unwanted info
 				in.readLine();	// unwanted info
 				position = 0;
@@ -95,7 +109,9 @@ public class Indexer {
 			else 
 			{
 				//System.out.println(line);
-				tokens = line.split("[ ]+");
+				line=line.toLowerCase();
+				line=line.trim();
+				tokens=line.split("[^a-z0-9']+");
 				docLength += tokens.length;
 				
 				for(String token : tokens)
@@ -108,7 +124,7 @@ public class Indexer {
 			
 		}
 		
-		addToURLIndex(docIdStr, new UrlInfo(url, docLength)); //add the final read url to index
+		addToURLIndex(Integer.parseInt(docIdStr), new UrlInfo(url, docLength)); //add the final read url to index
 		
 		/* Calculate idf for all words */
 		Set<String> wordSet = wordIndex.keySet();
@@ -124,10 +140,9 @@ public class Indexer {
 		in.close();
 	}
 	
-	private static void addToURLIndex(String docId, UrlInfo urlInfo)
+	private static void addToURLIndex(int docId, UrlInfo urlInfo)
 	{
-		if(docId != null)
-			urlIndex.put(docId, urlInfo);
+		urlIndex.put(docId, urlInfo);
 	}
 	
 	private static void addToWordIndex(String token, int docId, int pos)
