@@ -73,5 +73,13 @@ public class Payload implements Serializable{
 		return docList.size();
 	}
 	
+	public ArrayList<DocInfo> getDocList()
+	{
+		return docList;
+	}
 	
+	public double getIDF()
+	{
+		return idf;
+	}
 }

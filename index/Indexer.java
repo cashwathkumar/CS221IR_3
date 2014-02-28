@@ -77,15 +77,16 @@ public class Indexer {
 	
 	private static void readFromFile() throws IOException
 	{
-		BufferedReader in = new BufferedReader(new FileReader("C:\\Users\\SAISUNDAR\\Google Drive\\UCI related folders\\IR CS221_\\new run multithreaded\\IRdata.txt"));
+		BufferedReader in = new BufferedReader(new FileReader("E:\\books\\UCI\\Information Retrieval\\Projects\\project2\\Result1\\IRdata.txt"));
 		String line;
 		String[] tokens;
 		String url = "";
 		String docIdStr = null;
-		long docLength = 0;
+		int docLength = 0;
 		int docId = 0;
 		int position = 0;
 		int totalNoDoc = 0;
+		boolean firstExec = true;
 		
 		while((line = in.readLine()) != null)
 		{
@@ -93,16 +94,18 @@ public class Indexer {
 			if(line.equals(delimiter))
 			{
 				//System.out.println(line);
-				
-				docLength = 0;
+				if(!firstExec)
+					addToURLIndex(docId, new UrlInfo(url, docLength)); // add doc of prev iteration
+				else
+					firstExec = false;
 				docIdStr = in.readLine();
 				docIdStr = docIdStr.substring(6);	// 6 - position to extract docid
 				docId = Integer.parseInt(docIdStr);
 				url = in.readLine();
-				addToURLIndex(docId, new UrlInfo(url, docLength));
 				in.readLine();	// unwanted info
 				in.readLine();	// unwanted info
 				position = 0;
+				docLength = 0;
 				
 				totalNoDoc++;
 			}
@@ -111,7 +114,7 @@ public class Indexer {
 				//System.out.println(line);
 				line=line.toLowerCase();
 				line=line.trim();
-				tokens=line.split("[^a-z0-9']+");
+				tokens=line.split("[^a-z0-9]+");
 				docLength += tokens.length;
 				
 				for(String token : tokens)

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class DocInfo implements Serializable
 {
 	int docId;
-	long freq;
+	int freq;
 	static final long serialVersionUID=3;
 	ArrayList<Integer> pos;
 	
@@ -25,5 +25,15 @@ public class DocInfo implements Serializable
 	public void addPos(int pos)
 	{
 		this.pos.add(pos);
+	}
+	
+	public int getDocId()
+	{
+		return docId;
+	}
+	
+	public int getFreq()
+	{
+		return freq;
 	}
 }
