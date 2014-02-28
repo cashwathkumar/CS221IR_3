@@ -12,8 +12,8 @@ import java.io.ObjectInputStream;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Set;
-import java.util.TreeSet;
 
 public class SearchEngine {
 
@@ -52,9 +52,11 @@ public class SearchEngine {
 		
 		loadIndex();
 		
+		System.out.println("Enter Query: ");
+		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		
-		for(int i = 0; i < 10; i++)
+		for(int i = 0; i < 3; i++)
 		{
 			String query = getQuery(br);
 			
@@ -117,10 +119,10 @@ public class SearchEngine {
 	
 	private static void displayResults()
 	{
-		TreeSet<DocScore> topDocs = new TreeSet<DocScore>(new Comparator<DocScore>(){
+		PriorityQueue<DocScore> topDocs = new PriorityQueue<DocScore>(10, new Comparator<DocScore>(){
 			public int compare(DocScore a, DocScore b)
 			{
-				return b.docScore - a.docScore;
+				return a.docScore - b.docScore;
 			}
 		});
 		
@@ -140,7 +142,7 @@ public class SearchEngine {
 			}
 			else
 			{
-				DocScore leastDScoreObj = topDocs.last();
+				DocScore leastDScoreObj = topDocs.peek();
 				
 				if(leastDScoreObj.docScore < currentDocScore)
 				{
@@ -151,11 +153,16 @@ public class SearchEngine {
 		}
 		
 		/* display the urls*/
-		for(int i = 0; i < topDocs.size(); i++)
+		DocScore[] dScores = new DocScore[topDocs.size()];
+		
+		for(int i = topDocs.size() - 1; !topDocs.isEmpty(); i--)
 		{
-			DocScore dScore = topDocs.pollFirst();
-			
-			System.out.println(urlIndex.get(dScore.docId).getUrl());
+			dScores[i] = topDocs.poll();
+		}
+		
+		for(int i = 0; i < dScores.length; i++)
+		{	
+			System.out.println(urlIndex.get(dScores[i].docId).getUrl());
 		}
 	}
 }

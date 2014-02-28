@@ -137,7 +137,7 @@ public class Indexer {
 			Payload payload = wordIndex.get(word);
 			long noOfDoc = payload.getNumberofDoc();
 			
-			payload.setIDF((double)noOfDoc/totalNoDoc);
+			payload.setIDF((double)totalNoDoc/noOfDoc);
 		}
 		
 		in.close();
