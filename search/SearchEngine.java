@@ -58,13 +58,15 @@ public class SearchEngine {
 		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		
-		for(int i = 0; i < 3; i++)
+		for(int i = 0; i < 10; i++)
 		{
 			String query = getQuery(br);
 			
 			rankDocs(query);
 			
 			displayResults();
+			
+			clearScores();
 		}
 	}
 	
@@ -92,30 +94,31 @@ public class SearchEngine {
 	{
 		Payload tokenPayload = wordIndex.get(token);
 		if(tokenPayload!=null)
-		{List<DocInfo> docList = tokenPayload.getDocList();
-
-		int idf = (int)tokenPayload.getIDF();
-
-		for(int i = 0; (i < 100) && (i < docList.size()); i++)
 		{
-			DocInfo doc = docList.get(i);
-			int docId = doc.getDocId();
-			int tf = doc.getFreq();
-			float score = 0;
-
-			if(docScoreMap.containsKey(docId))
+			List<DocInfo> docList = tokenPayload.getDocList();
+	
+			float idf = (float)tokenPayload.getIDF();
+	
+			for(int i = 0; i < docList.size(); i++)
 			{
-				score = docScoreMap.get(docId);
-				score += idf *(Math.log(1+ tf));
-
-				docScoreMap.put(docId, score);
+				DocInfo doc = docList.get(i);
+				int docId = doc.getDocId();
+				int tf = doc.getFreq();
+				float score = 0;
+	
+				if(docScoreMap.containsKey(docId))
+				{
+					score = docScoreMap.get(docId);
+					score += idf *((float)Math.log(1+ tf));
+	
+					docScoreMap.put(docId, score);
+				}
+				else
+				{
+					score = idf *((float)(Math.log(1+ tf)));
+					docScoreMap.put(docId, score);
+				}
 			}
-			else
-			{
-				score = idf *( (float)(Math.log(1+ tf)));
-				docScoreMap.put(docId, score);
-			}
-		}
 		}
 	}
 	
@@ -171,5 +174,11 @@ public class SearchEngine {
 		{	
 			System.out.println(urlIndex.get(dScores[i].docId).getUrl());
 		}
+	}
+	
+	private static void clearScores()
+	{
+		docScoreMap.clear();
+		//docScoreMap = new HashMap<Integer, Float>();
 	}
 }

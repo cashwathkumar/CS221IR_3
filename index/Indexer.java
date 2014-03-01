@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.lang.Math;
 public class Indexer {
@@ -20,7 +21,7 @@ public class Indexer {
 	{
 		readFromFile();
 		
-		String[] words={"eppstein","computer","words","retrieval","fall","xianghua"};
+		String[] words={"eppstein","computer","words","retrieval","fall","xianghua", "information", "software", "engineering", "machine", "learning"};
 		
 		
 		for(String w:words)
@@ -78,8 +79,10 @@ public class Indexer {
 	
 	private static void readFromFile() throws IOException
 	{
-		String file="C:\\Users\\SAISUNDAR\\Google Drive\\UCI related folders\\IR CS221_\\new run multithreaded\\IRdata.txt";
-		String file1="C:\\Users\\SAISUNDAR\\Google Drive\\UCI related folders\\IR CS221_\\new run multithreaded\\stopwords.txt";
+		//String file="C:\\Users\\SAISUNDAR\\Google Drive\\UCI related folders\\IR CS221_\\new run multithreaded\\IRdata.txt";
+		//String file1="C:\\Users\\SAISUNDAR\\Google Drive\\UCI related folders\\IR CS221_\\new run multithreaded\\stopwords.txt";
+		String file = "E:\\books\\UCI\\Information Retrieval\\Projects\\project2\\Result1\\IRdata.txt";
+		String file1 = "E:\\books\\UCI\\Information Retrieval\\Projects\\project2\\Result1\\stopwords.txt";
 		//BufferedReader in = new BufferedReader(new FileReader("E:\\books\\UCI\\Information Retrieval\\Projects\\project2\\Result1\\IRdata.txt"));
 		BufferedReader in = new BufferedReader(new FileReader(file));
 		BufferedReader in1 = new BufferedReader(new FileReader(file1));
@@ -128,9 +131,10 @@ public class Indexer {
 				
 				for(String token : tokens)
 				{
-					if(!stopWords.contains(token) || token.length()>2)
-					{addToWordIndex(token, docId, position);
-					position++;
+					if(!stopWords.contains(token) && token.length()>2)
+					{
+						addToWordIndex(token, docId, position);
+						position++;
 					}
 				}
 			}
@@ -146,7 +150,7 @@ public class Indexer {
 			Payload payload = wordIndex.get(word);
 			long noOfDoc = payload.getNumberofDoc();
 			
-			payload.setIDF(Math.log((double)totalNoDoc/noOfDoc));
+			payload.setIDF((float)Math.log((double)totalNoDoc/noOfDoc));
 		}
 		stopWords.clear();
 		in.close();
