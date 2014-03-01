@@ -54,14 +54,13 @@ public class SearchEngine {
 		
 		loadIndex();
 		
-		System.out.println("Enter Query: ");
+		System.out.println("Enter Query:  ( enter \"exit\" to leave)");
 		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		
-		for(int i = 0; i < 10; i++)
+		String query = getQuery(br);
+		for(int i = 0;query.equals("exit");query = getQuery(br), i++)
 		{
-			String query = getQuery(br);
-			
+					
 			rankDocs(query);
 			
 			displayResults();
