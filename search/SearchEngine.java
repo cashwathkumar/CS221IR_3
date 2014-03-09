@@ -194,10 +194,38 @@ public class SearchEngine extends Indexer{
 					docScoreMap.put(docId, score);
 				}
 			}
+			
+			List<Integer> titleList = tokenPayload.getTitleList();
+			int docId;
+			idf = (float)tokenPayload.getTitleIDF();
+			//drop document if idf score is very low... <1 ==> the word occurs atleast once  in almost every 2.5 docs ..
+			if(idf<1)
+				return;
+		
+			for(int i = 0; i < titleList.size(); i++)
+			{
+				docId = titleList.get(i);
+				
+				float score = 0;
+	
+				if(docScoreMap.containsKey(docId))
+				{
+					score = docScoreMap.get(docId);
+					score *= idf*0.5;
+	
+					docScoreMap.put(docId, score);
+				}
+				else
+				{
+					score = idf*20;
+					docScoreMap.put(docId, score);
+				}
+			}
+			
+			
 		}
 		
 	}
-	
 	
 	private static void displayResults()
 	{
@@ -248,6 +276,7 @@ public class SearchEngine extends Indexer{
 		
 		for(int i = 0; i < dScores.length; i++)
 		{	
+			System.out.println(urlIndex.get(dScores[i].docId).getTitle());
 			System.out.println(urlIndex.get(dScores[i].docId).getUrl());
 		}
 	}

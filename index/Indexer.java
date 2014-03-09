@@ -81,6 +81,7 @@ public class Indexer {
 	{
 		String file="C:\\Users\\SAISUNDAR\\Google Drive\\UCI related folders\\IR CS221_\\new run multithreaded\\IRdata.txt";
 		String file1="C:\\Users\\SAISUNDAR\\Google Drive\\UCI related folders\\IR CS221_\\new run multithreaded\\stopwords.txt";
+		String file2="C:\\Users\\SAISUNDAR\\Google Drive\\UCI related folders\\IR CS221_\\Project 3\\Title.txt";
 //		String file = "E:\\books\\UCI\\Information Retrieval\\Projects\\project2\\Result1\\IRdata.txt";
 //		String file1 = "E:\\books\\UCI\\Information Retrieval\\Projects\\project2\\Result1\\stopwords.txt";
 		//BufferedReader in = new BufferedReader(new FileReader("E:\\books\\UCI\\Information Retrieval\\Projects\\project2\\Result1\\IRdata.txt"));
@@ -123,6 +124,7 @@ public class Indexer {
 			else 
 			{
 				//System.out.println(line);
+				
 				line=line.toLowerCase();
 				line=line.trim();
 				tokens=line.split("[^a-z0-9]+");
@@ -141,6 +143,43 @@ public class Indexer {
 		
 		addToURLIndex(Integer.parseInt(docIdStr), new UrlInfo(url, docLength)); //add the final read url to index
 		
+		in.close();
+		in = new BufferedReader(new FileReader(file2));
+		
+		int currDocID=0;
+		UrlInfo info;
+		// for titles...
+		while((line = in.readLine()) != null)
+		{
+			
+			if(line.contains("DOCID"))
+			{
+				tokens=line.split("[^a-z0-9]+");
+				currDocID=Integer.parseInt(tokens[1]);
+				
+				
+			}
+			else 
+			{
+				//System.out.println(line);
+				if(line.length()<2)continue;
+				info=urlIndex.get(currDocID);
+				if(info.getTitle()==null)info.setTitle(line);
+				line=line.toLowerCase();
+				line=line.trim();
+				tokens=line.split("[^a-z0-9]+");
+				docLength += tokens.length;
+				
+				for(String token : tokens)
+				{
+					if(!stopWords.contains(token) && token.length()>2)
+					{
+						addToWordIndexTitle(token, currDocID);
+					}
+				}
+			}
+		}
+			
 		/* Calculate idf for all words */
 		Set<String> wordSet = wordIndex.keySet();
 		
@@ -150,6 +189,7 @@ public class Indexer {
 			long noOfDoc = payload.getNumberofDoc();
 			
 			payload.setIDF((float)Math.log((double)totalNoDoc/noOfDoc));
+			payload.idfTitle=(float)Math.log((double)totalNoDoc/payload.titleList.size()-1);
 			
 			for(int i = 0; i < payload.docList.size(); i++)
 			{
@@ -157,11 +197,30 @@ public class Indexer {
 				payload.docList.get(i).freq=(float)(Math.log(1+ fr));
 			}
 		}
+		
 		stopWords.clear();
 		in.close();
 		in1.close();
 	}
-	
+	private static void addToWordIndexTitle(String token, int docId)
+	{
+		Payload payload;
+		
+		if(wordIndex.containsKey(token))
+		{
+			payload = wordIndex.get(token);
+		}
+		else
+		{
+			payload = new Payload();
+		}
+		int len=payload.titleList.size()-1;
+		if(len>0 && payload.titleList.get(len)==docId)
+			return;
+		payload.titleList.add(docId);
+		wordIndex.put(token, payload);
+				
+	}
 	private static void addToURLIndex(int docId, UrlInfo urlInfo)
 	{
 		urlIndex.put(docId, urlInfo);

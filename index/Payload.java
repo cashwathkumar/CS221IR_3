@@ -6,17 +6,20 @@ import java.util.ArrayList;
 public class Payload implements Serializable{
 	
 	ArrayList<DocInfo> docList;
+	ArrayList<Integer> titleList;
 	int currId;
 	int docPos;
 	static final long serialVersionUID=1;
 	long totalFreq;
 	
 	double idf;
+	float idfTitle;
 	
 	Payload()
 	{
 		//docList = new ArrayList<DocInfo>();
 		docList= new ArrayList<DocInfo>();
+		titleList = new ArrayList<Integer>();
 		totalFreq = 0;
 		currId=-1;
 		docPos=-1;
@@ -77,9 +80,16 @@ public class Payload implements Serializable{
 	{
 		return docList;
 	}
-	
+	public ArrayList<Integer> getTitleList()
+	{
+		return titleList;
+	}
 	public double getIDF()
 	{
 		return idf;
+	}
+	public double getTitleIDF()
+	{
+		return idfTitle;
 	}
 }
