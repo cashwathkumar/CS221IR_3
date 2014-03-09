@@ -12,8 +12,8 @@ import java.util.Set;
 import java.lang.Math;
 public class Indexer {
 	
-	static HashMap<String, Payload> wordIndex = new HashMap<String, Payload>();
-	static HashMap<Integer, UrlInfo> urlIndex = new HashMap<Integer, UrlInfo>();
+	public static HashMap<String, Payload> wordIndex = new HashMap<String, Payload>();
+	public static HashMap<Integer, UrlInfo> urlIndex = new HashMap<Integer, UrlInfo>();
 	
 	public static final String delimiter = "!@#$%^&*()_+";
 	public static HashSet<String> stopWords=new HashSet<String>();
@@ -77,7 +77,7 @@ public class Indexer {
 		uOut.close();	
 	}
 	
-	private static void readFromFile() throws IOException
+	public static void readFromFile() throws IOException
 	{
 		String file="C:\\Users\\SAISUNDAR\\Google Drive\\UCI related folders\\IR CS221_\\new run multithreaded\\IRdata.txt";
 		String file1="C:\\Users\\SAISUNDAR\\Google Drive\\UCI related folders\\IR CS221_\\new run multithreaded\\stopwords.txt";

@@ -17,58 +17,64 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import java.lang.Math;
 import java.util.ArrayList;
-public class SearchEngine {
+public class SearchEngine extends Indexer{
 
-	private static HashMap<String, Payload> wordIndex = new HashMap<String, Payload>();
-	private static HashMap<Integer, UrlInfo> urlIndex = new HashMap<Integer, UrlInfo>();
+//	private static HashMap<String, Payload> wordIndex = new HashMap<String, Payload>();
+//	private static HashMap<Integer, UrlInfo> urlIndex = new HashMap<Integer, UrlInfo>();
 	
 	public static HashMap<Integer, Float> docScoreMap = new HashMap<Integer, Float>();
 	
 	private static void loadIndex() throws IOException
 	{
-		FileInputStream wIn = new FileInputStream("Windex");
-		FileInputStream uIn = new FileInputStream("Uindex");
-		
-		ObjectInputStream oIn = new ObjectInputStream(wIn);
-		System.out.println("about to read indices");
-		try
-		{
-			wordIndex = (HashMap<String, Payload>)oIn.readObject();
-			
-			System.out.println("word index done");
-			oIn = new ObjectInputStream(uIn);
-			
-			urlIndex = (HashMap<Integer, UrlInfo>)oIn.readObject();
-			System.out.println("URL index done");
-		} 
-		catch (ClassNotFoundException e) 
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		wIn.close();
-		uIn.close();
+//		FileInputStream wIn = new FileInputStream("Windex");
+//		FileInputStream uIn = new FileInputStream("Uindex");
+//		
+//		ObjectInputStream oIn = new ObjectInputStream(wIn);
+//		System.out.println("about to read indices");
+//		try
+//		{
+//			wordIndex = (HashMap<String, Payload>)oIn.readObject();
+//			
+//			System.out.println("word index done");
+//			oIn = new ObjectInputStream(uIn);
+//			
+//			urlIndex = (HashMap<Integer, UrlInfo>)oIn.readObject();
+//			System.out.println("URL index done");
+//		} 
+//		catch (ClassNotFoundException e) 
+//		{
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		wIn.close();
+//		uIn.close();
+		readFromFile();
 	}
 	
 	public static void main(String args[]) throws IOException
 	{
 		
 		loadIndex();
+		System.out.println("length of word index"+wordIndex.size());
+		System.out.println("length of word index"+urlIndex.size());
 		
 		System.out.println("Enter Query:  ( enter \"exit\" to leave)");
 		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String query = getQuery(br);
-		for(int i = 0;query.equals("exit");query = getQuery(br), i++)
+	
+		for(int i = 0;!query.equals("exit");query = getQuery(br), i++)
 		{
-					
+			
+			if(query.length()<2)continue;		
 			rankDocs(query);
 			
 			displayResults();
 			
 			clearScores();
 		}
+		System.out.println("End of search......");
 	}
 	
 	private static String getQuery(BufferedReader br) throws IOException
@@ -82,11 +88,17 @@ public class SearchEngine {
 		ArrayList<String> ProcTokens=new ArrayList<String>();
 		
 		for(String t:token)
-			if(!Indexer.stopWords.contains(t))
+		{
+			if(!stopWords.contains(t))
+			{
 				ProcTokens.add(t);
-		
-		return (String[]) ProcTokens.toArray();
-		
+			}
+			
+		}
+
+		String[] newArr= new String[ProcTokens.size()];
+		newArr=ProcTokens.toArray(newArr);
+		return newArr;
 	}
 	
 	private static void incScorePos(String t1,String t2)
@@ -116,10 +128,9 @@ public class SearchEngine {
 				temp.posWord1=t1L.get(p1).getPos();
 				temp.posWord2=t2L.get(p2).getPos();
 				if(temp.checkIncreaseScore())
-				{
 					temp.incScore();
-					
-				}
+				
+				p1++;p2++;
 		
 			}
 		}
@@ -153,6 +164,7 @@ public class SearchEngine {
 	private static void calculateDocScores(String token)
 	{
 		Payload tokenPayload = wordIndex.get(token);
+		
 		if(tokenPayload!=null)
 		{
 			List<DocInfo> docList = tokenPayload.getDocList();
@@ -161,7 +173,7 @@ public class SearchEngine {
 			//drop document if idf score is very low... <1 ==> the word occurs atleast once  in almost every 2.5 docs ..
 			if(idf<1)
 				return;
-	
+		
 			for(int i = 0; i < docList.size(); i++)
 			{
 				DocInfo doc = docList.get(i);
@@ -183,6 +195,7 @@ public class SearchEngine {
 				}
 			}
 		}
+		
 	}
 	
 	

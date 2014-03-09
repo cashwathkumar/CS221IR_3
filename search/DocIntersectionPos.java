@@ -13,7 +13,7 @@ public class DocIntersectionPos {
 	ArrayList<Integer> posWord2;
 	
 	static int MAX_DISTANCE=10; // maximu distance between two words , if greater than 20 is being ignored
-	static float SCORE_INC_FACTOR=(float)(0.2);
+	static float SCORE_INC_FACTOR=(float)(0.5);
 	
 	boolean checkIncreaseScore()
 	{
