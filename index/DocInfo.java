@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class DocInfo implements Serializable
 {
 	int docId;
-	int freq;
+	float freq;
 	static final long serialVersionUID=3;
 	ArrayList<Integer> pos;
 	
@@ -15,6 +15,12 @@ public class DocInfo implements Serializable
 		this.docId = docId;
 		pos = new ArrayList<Integer>();
 		freq = 0;
+	}
+	
+	public ArrayList<Integer> getPos()
+	{
+		return pos;
+		
 	}
 	
 	public void incrementFreq()
@@ -32,7 +38,7 @@ public class DocInfo implements Serializable
 		return docId;
 	}
 	
-	public int getFreq()
+	public float getFreq()
 	{
 		return freq;
 	}

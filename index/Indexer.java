@@ -16,7 +16,7 @@ public class Indexer {
 	static HashMap<Integer, UrlInfo> urlIndex = new HashMap<Integer, UrlInfo>();
 	
 	public static final String delimiter = "!@#$%^&*()_+";
-	
+	public static HashSet<String> stopWords=new HashSet<String>();
 	public static void main(String args[]) throws IOException
 	{
 		readFromFile();
@@ -79,14 +79,13 @@ public class Indexer {
 	
 	private static void readFromFile() throws IOException
 	{
-		//String file="C:\\Users\\SAISUNDAR\\Google Drive\\UCI related folders\\IR CS221_\\new run multithreaded\\IRdata.txt";
-		//String file1="C:\\Users\\SAISUNDAR\\Google Drive\\UCI related folders\\IR CS221_\\new run multithreaded\\stopwords.txt";
-		String file = "E:\\books\\UCI\\Information Retrieval\\Projects\\project2\\Result1\\IRdata.txt";
-		String file1 = "E:\\books\\UCI\\Information Retrieval\\Projects\\project2\\Result1\\stopwords.txt";
+		String file="C:\\Users\\SAISUNDAR\\Google Drive\\UCI related folders\\IR CS221_\\new run multithreaded\\IRdata.txt";
+		String file1="C:\\Users\\SAISUNDAR\\Google Drive\\UCI related folders\\IR CS221_\\new run multithreaded\\stopwords.txt";
+//		String file = "E:\\books\\UCI\\Information Retrieval\\Projects\\project2\\Result1\\IRdata.txt";
+//		String file1 = "E:\\books\\UCI\\Information Retrieval\\Projects\\project2\\Result1\\stopwords.txt";
 		//BufferedReader in = new BufferedReader(new FileReader("E:\\books\\UCI\\Information Retrieval\\Projects\\project2\\Result1\\IRdata.txt"));
 		BufferedReader in = new BufferedReader(new FileReader(file));
 		BufferedReader in1 = new BufferedReader(new FileReader(file1));
-		HashSet<String> stopWords=new HashSet<String>();
 		String line;
 		String[] tokens;
 		String url = "";
@@ -151,6 +150,12 @@ public class Indexer {
 			long noOfDoc = payload.getNumberofDoc();
 			
 			payload.setIDF((float)Math.log((double)totalNoDoc/noOfDoc));
+			
+			for(int i = 0; i < payload.docList.size(); i++)
+			{
+				float fr=payload.docList.get(i).freq;
+				payload.docList.get(i).freq=(float)(Math.log(1+ fr));
+			}
 		}
 		stopWords.clear();
 		in.close();

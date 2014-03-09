@@ -3,6 +3,7 @@ package search;
 import index.DocInfo;
 import index.Payload;
 import index.UrlInfo;
+import index.Indexer;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -15,12 +16,13 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
 import java.lang.Math;
+import java.util.ArrayList;
 public class SearchEngine {
 
 	private static HashMap<String, Payload> wordIndex = new HashMap<String, Payload>();
 	private static HashMap<Integer, UrlInfo> urlIndex = new HashMap<Integer, UrlInfo>();
 	
-	private static HashMap<Integer, Float> docScoreMap = new HashMap<Integer, Float>();
+	public static HashMap<Integer, Float> docScoreMap = new HashMap<Integer, Float>();
 	
 	private static void loadIndex() throws IOException
 	{
@@ -75,18 +77,77 @@ public class SearchEngine {
 		
 		return br.readLine();
 	}
+	private static String[] removeStopWords(String[] token)
+	{
+		ArrayList<String> ProcTokens=new ArrayList<String>();
+		
+		for(String t:token)
+			if(!Indexer.stopWords.contains(t))
+				ProcTokens.add(t);
+		
+		return (String[]) ProcTokens.toArray();
+		
+	}
 	
+	private static void incScorePos(String t1,String t2)
+	{
+		
+		Payload t1P = wordIndex.get(t1);
+		Payload t2P = wordIndex.get(t2);
+		
+		if(t1P==null||t2P==null)return;
+		
+		ArrayList<DocInfo> t1L = t1P.getDocList();
+		ArrayList<DocInfo> t2L = t2P.getDocList();
+		
+		int p1=0,p2=0,docID1,docID2;
+		
+		DocIntersectionPos temp= new DocIntersectionPos();
+		for(;p1<t1L.size() && p2 < t2L.size();)
+		{
+			docID1=t1L.get(p1).getDocId();
+			docID2=t2L.get(p2).getDocId();
+			
+			if(docID1<docID2)p1++;
+			else if(docID2<docID1)p2++;
+			else
+			{
+				temp.docId=docID1;
+				temp.posWord1=t1L.get(p1).getPos();
+				temp.posWord2=t2L.get(p2).getPos();
+				if(temp.checkIncreaseScore())
+				{
+					temp.incScore();
+					
+				}
+		
+			}
+		}
+	}
+		
 	private static void rankDocs(String input)
 	{
 		String query = input.toLowerCase();
 		
 		String[] tokens = query.split("[^a-z0-9]+");
 		
+		tokens=removeStopWords(tokens);
+		
 		/*calculate score for each document containing the token */
 		for(String token : tokens)
 		{
 			calculateDocScores(token);
 		}
+		
+		for(int i=0;i<tokens.length;i++)
+		{
+			for(int j=i+1;j<tokens.length;j++)
+			{
+				incScorePos(tokens[i],tokens[j]);
+			}
+			
+		}
+		
 	}
 	
 	private static void calculateDocScores(String token)
@@ -97,24 +158,27 @@ public class SearchEngine {
 			List<DocInfo> docList = tokenPayload.getDocList();
 	
 			float idf = (float)tokenPayload.getIDF();
+			//drop document if idf score is very low... <1 ==> the word occurs atleast once  in almost every 2.5 docs ..
+			if(idf<1)
+				return;
 	
 			for(int i = 0; i < docList.size(); i++)
 			{
 				DocInfo doc = docList.get(i);
 				int docId = doc.getDocId();
-				int tf = doc.getFreq();
+				
 				float score = 0;
 	
 				if(docScoreMap.containsKey(docId))
 				{
 					score = docScoreMap.get(docId);
-					score += idf *((float)Math.log(1+ tf));
+					score += idf*doc.getFreq();
 	
 					docScoreMap.put(docId, score);
 				}
 				else
 				{
-					score = idf *((float)(Math.log(1+ tf)));
+					score = idf*doc.getFreq();
 					docScoreMap.put(docId, score);
 				}
 			}
