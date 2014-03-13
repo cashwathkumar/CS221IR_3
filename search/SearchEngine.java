@@ -70,11 +70,23 @@ public class SearchEngine extends Indexer{
 			if(query.length()<2)continue;		
 			rankDocs(query);
 			
-			displayResults();
+			DocResult[] docResults = getResults();
+			
+			printResults(docResults);
 			
 			clearScores();
 		}
 		System.out.println("End of search......");
+	}
+	
+	public static DocResult[] processQuery(String query)
+	{
+		if(query.length() < 2)
+			return null;
+		
+		rankDocs(query);
+		
+		return getResults();
 	}
 	
 	private static String getQuery(BufferedReader br) throws IOException
@@ -227,7 +239,7 @@ public class SearchEngine extends Indexer{
 		
 	}
 	
-	private static void displayResults()
+	private static DocResult[] getResults()
 	{
 		PriorityQueue<DocScore> topDocs = new PriorityQueue<DocScore>(10, new Comparator<DocScore>(){
 			public int compare(DocScore a, DocScore b)
@@ -267,17 +279,25 @@ public class SearchEngine extends Indexer{
 		}
 		
 		/* display the urls*/
-		DocScore[] dScores = new DocScore[topDocs.size()];
+		DocResult[] dResults = new DocResult[topDocs.size()];
 		
 		for(int i = topDocs.size() - 1; !topDocs.isEmpty(); i--)
 		{
-			dScores[i] = topDocs.poll();
+			DocScore dscore = topDocs.poll();
+			
+			dResults[i] = new DocResult(urlIndex.get(dscore.docId).getTitle(),
+					urlIndex.get(dscore.docId).getUrl());
 		}
 		
-		for(int i = 0; i < dScores.length; i++)
+		return dResults;
+	}
+	
+	private static void printResults(DocResult[] dResults)
+	{
+		for(int i = 0; i < dResults.length; i++)
 		{	
-			System.out.println(urlIndex.get(dScores[i].docId).getTitle());
-			System.out.println(urlIndex.get(dScores[i].docId).getUrl());
+			System.out.println(dResults[i].getTitle());
+			System.out.println(dResults[i].getUrl());
 		}
 	}
 	
