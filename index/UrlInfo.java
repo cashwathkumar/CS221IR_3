@@ -6,6 +6,7 @@ public class UrlInfo implements Serializable
 {
 	private String url;
 	private int length;
+	private int titleLength;
 	private String title;
 	static final long serialVersionUID=2;
 	
@@ -20,6 +21,7 @@ public class UrlInfo implements Serializable
 	{
 		
 		title=tit;
+		titleLength=title.length();
 	}
 	public String getUrl()
 	{

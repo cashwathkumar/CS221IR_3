@@ -6,7 +6,9 @@ import index.UrlInfo;
 import index.Indexer;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
@@ -24,31 +26,45 @@ public class SearchEngine extends Indexer{
 	
 	public HashMap<Integer, Float> docScoreMap = new HashMap<Integer, Float>();
 	
-	private void loadIndex() throws IOException
+	public void loadIndex()
 	{
-		FileInputStream wIn = new FileInputStream("Windex");
-		FileInputStream uIn = new FileInputStream("Uindex");
-		
-		ObjectInputStream oIn = new ObjectInputStream(wIn);
-		System.out.println("about to read indices");
 		try
 		{
-			wordIndex = (HashMap<String, Payload>)oIn.readObject();
+			File f = new File("Test");
+			System.out.println(f.getAbsolutePath());
 			
-			System.out.println("word index done");
-			oIn = new ObjectInputStream(uIn);
 			
-			urlIndex = (HashMap<Integer, UrlInfo>)oIn.readObject();
-			System.out.println("URL index done");
-		} 
-		catch (ClassNotFoundException e) 
+			FileInputStream wIn = new FileInputStream("Windex");
+			FileInputStream uIn = new FileInputStream("Uindex");
+			
+			ObjectInputStream oIn = new ObjectInputStream(wIn);
+			System.out.println("about to read indices");
+			try
+			{
+				wordIndex = (HashMap<String, Payload>)oIn.readObject();
+				
+				System.out.println("word index done");
+				oIn = new ObjectInputStream(uIn);
+				
+				urlIndex = (HashMap<Integer, UrlInfo>)oIn.readObject();
+				System.out.println("URL index done");
+			} 
+			catch (ClassNotFoundException e) 
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			wIn.close();
+			uIn.close();
+		}
+		catch(FileNotFoundException e)
 		{
-			// TODO Auto-generated catch block
+			System.out.println("File not found");
+		}
+		catch(IOException e)
+		{
 			e.printStackTrace();
 		}
-		
-		wIn.close();
-		uIn.close();
 //		readFromFile();
 	}
 	
@@ -86,7 +102,11 @@ public class SearchEngine extends Indexer{
 		
 		rankDocs(query);
 		
-		return getResults();
+		DocResult[] docResults = getResults();
+		
+		this.clearScores();
+		
+		return docResults;
 	}
 	
 	private String getQuery(BufferedReader br) throws IOException
@@ -223,15 +243,11 @@ public class SearchEngine extends Indexer{
 				if(docScoreMap.containsKey(docId))
 				{
 					score = docScoreMap.get(docId);
-					score *= idf*0.5;
-	
+					score *= idf*(1+(10/urlIndex.get(docId).getTitle().length()));
+					score *= idf*(1+(10/urlIndex.get(docId).getUrl().length()));
 					docScoreMap.put(docId, score);
 				}
-				else
-				{
-					score = idf*20;
-					docScoreMap.put(docId, score);
-				}
+				//no need for else part , if no doc is tere it means none of the words are there, but the title is there==>dubious link
 			}
 			
 			

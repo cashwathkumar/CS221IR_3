@@ -3,8 +3,6 @@ package search;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import index.Indexer;
-import search.*;
 
 public class DocIntersectionPos {
 	

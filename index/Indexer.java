@@ -5,6 +5,9 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
@@ -197,6 +200,26 @@ public class Indexer {
 				payload.docList.get(i).freq=(float)(Math.log(1+ fr));
 			}
 		}
+		
+		for(String word : wordSet)
+		{
+			Payload payload = wordIndex.get(word);
+			ArrayList<DocInfo> myList = payload.getDocList();
+			Collections.sort(myList, new Comparator<DocInfo>() {
+				@Override
+				public int compare(DocInfo o1, DocInfo o2) {
+					if(o1.getDocId() < o2.getDocId())
+						return -1;
+					else if(o1.getDocId() > o2.getDocId())
+						return 1;
+					else
+						return 0;
+				}
+			});
+			
+			
+		}
+
 		
 		stopWords.clear();
 		in.close();
