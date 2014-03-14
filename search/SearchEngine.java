@@ -19,67 +19,67 @@ import java.lang.Math;
 import java.util.ArrayList;
 public class SearchEngine extends Indexer{
 
-//	private static HashMap<String, Payload> wordIndex = new HashMap<String, Payload>();
-//	private static HashMap<Integer, UrlInfo> urlIndex = new HashMap<Integer, UrlInfo>();
+	private HashMap<String, Payload> wordIndex = new HashMap<String, Payload>();
+	private HashMap<Integer, UrlInfo> urlIndex = new HashMap<Integer, UrlInfo>();
 	
-	public static HashMap<Integer, Float> docScoreMap = new HashMap<Integer, Float>();
+	public HashMap<Integer, Float> docScoreMap = new HashMap<Integer, Float>();
 	
-	private static void loadIndex() throws IOException
+	private void loadIndex() throws IOException
 	{
-//		FileInputStream wIn = new FileInputStream("Windex");
-//		FileInputStream uIn = new FileInputStream("Uindex");
-//		
-//		ObjectInputStream oIn = new ObjectInputStream(wIn);
-//		System.out.println("about to read indices");
-//		try
-//		{
-//			wordIndex = (HashMap<String, Payload>)oIn.readObject();
-//			
-//			System.out.println("word index done");
-//			oIn = new ObjectInputStream(uIn);
-//			
-//			urlIndex = (HashMap<Integer, UrlInfo>)oIn.readObject();
-//			System.out.println("URL index done");
-//		} 
-//		catch (ClassNotFoundException e) 
-//		{
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
-//		wIn.close();
-//		uIn.close();
-		readFromFile();
+		FileInputStream wIn = new FileInputStream("Windex");
+		FileInputStream uIn = new FileInputStream("Uindex");
+		
+		ObjectInputStream oIn = new ObjectInputStream(wIn);
+		System.out.println("about to read indices");
+		try
+		{
+			wordIndex = (HashMap<String, Payload>)oIn.readObject();
+			
+			System.out.println("word index done");
+			oIn = new ObjectInputStream(uIn);
+			
+			urlIndex = (HashMap<Integer, UrlInfo>)oIn.readObject();
+			System.out.println("URL index done");
+		} 
+		catch (ClassNotFoundException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		wIn.close();
+		uIn.close();
+//		readFromFile();
 	}
 	
 	public static void main(String args[]) throws IOException
 	{
-		
-		loadIndex();
-		System.out.println("length of word index"+wordIndex.size());
-		System.out.println("length of word index"+urlIndex.size());
+		SearchEngine s = new SearchEngine();
+		s.loadIndex();
+		System.out.println("length of word index"+s.wordIndex.size());
+		System.out.println("length of word index"+s.urlIndex.size());
 		
 		System.out.println("Enter Query:  ( enter \"exit\" to leave)");
 		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		String query = getQuery(br);
+		String query = s.getQuery(br);
 	
-		for(int i = 0;!query.equals("exit");query = getQuery(br), i++)
+		for(int i = 0;!query.equals("exit");query = s.getQuery(br), i++)
 		{
 			
 			if(query.length()<2)continue;		
-			rankDocs(query);
+			s.rankDocs(query);
 			
-			DocResult[] docResults = getResults();
+			DocResult[] docResults = s.getResults();
 			
-			printResults(docResults);
+			s.printResults(docResults);
 			
-			clearScores();
+			s.clearScores();
 		}
 		System.out.println("End of search......");
 	}
 	
-	public static DocResult[] processQuery(String query)
+	public DocResult[] processQuery(String query)
 	{
 		if(query.length() < 2)
 			return null;
@@ -89,13 +89,13 @@ public class SearchEngine extends Indexer{
 		return getResults();
 	}
 	
-	private static String getQuery(BufferedReader br) throws IOException
+	private String getQuery(BufferedReader br) throws IOException
 	{
 		System.out.println("Enter Query: ");
 		
 		return br.readLine();
 	}
-	private static String[] removeStopWords(String[] token)
+	private String[] removeStopWords(String[] token)
 	{
 		ArrayList<String> ProcTokens=new ArrayList<String>();
 		
@@ -113,7 +113,7 @@ public class SearchEngine extends Indexer{
 		return newArr;
 	}
 	
-	private static void incScorePos(String t1,String t2)
+	private void incScorePos(String t1,String t2)
 	{
 		
 		Payload t1P = wordIndex.get(t1);
@@ -140,7 +140,7 @@ public class SearchEngine extends Indexer{
 				temp.posWord1=t1L.get(p1).getPos();
 				temp.posWord2=t2L.get(p2).getPos();
 				if(temp.checkIncreaseScore())
-					temp.incScore();
+					temp.incScore(this.docScoreMap);
 				
 				p1++;p2++;
 		
@@ -148,7 +148,7 @@ public class SearchEngine extends Indexer{
 		}
 	}
 		
-	private static void rankDocs(String input)
+	private void rankDocs(String input)
 	{
 		String query = input.toLowerCase();
 		
@@ -173,7 +173,7 @@ public class SearchEngine extends Indexer{
 		
 	}
 	
-	private static void calculateDocScores(String token)
+	private void calculateDocScores(String token)
 	{
 		Payload tokenPayload = wordIndex.get(token);
 		
@@ -239,7 +239,7 @@ public class SearchEngine extends Indexer{
 		
 	}
 	
-	private static DocResult[] getResults()
+	private DocResult[] getResults()
 	{
 		PriorityQueue<DocScore> topDocs = new PriorityQueue<DocScore>(10, new Comparator<DocScore>(){
 			public int compare(DocScore a, DocScore b)
@@ -292,7 +292,7 @@ public class SearchEngine extends Indexer{
 		return dResults;
 	}
 	
-	private static void printResults(DocResult[] dResults)
+	private void printResults(DocResult[] dResults)
 	{
 		for(int i = 0; i < dResults.length; i++)
 		{	
@@ -301,7 +301,7 @@ public class SearchEngine extends Indexer{
 		}
 	}
 	
-	private static void clearScores()
+	private void clearScores()
 	{
 		docScoreMap.clear();
 		//docScoreMap = new HashMap<Integer, Float>();

@@ -79,12 +79,12 @@ public class Indexer {
 	
 	public static void readFromFile() throws IOException
 	{
-		String file="C:\\Users\\SAISUNDAR\\Google Drive\\UCI related folders\\IR CS221_\\new run multithreaded\\IRdata.txt";
-		String file1="C:\\Users\\SAISUNDAR\\Google Drive\\UCI related folders\\IR CS221_\\new run multithreaded\\stopwords.txt";
-		String file2="C:\\Users\\SAISUNDAR\\Google Drive\\UCI related folders\\IR CS221_\\Project 3\\Title.txt";
-//		String file = "E:\\books\\UCI\\Information Retrieval\\Projects\\project2\\Result1\\IRdata.txt";
-//		String file1 = "E:\\books\\UCI\\Information Retrieval\\Projects\\project2\\Result1\\stopwords.txt";
-		//BufferedReader in = new BufferedReader(new FileReader("E:\\books\\UCI\\Information Retrieval\\Projects\\project2\\Result1\\IRdata.txt"));
+//		String file="C:\\Users\\SAISUNDAR\\Google Drive\\UCI related folders\\IR CS221_\\new run multithreaded\\IRdata.txt";
+//		String file1="C:\\Users\\SAISUNDAR\\Google Drive\\UCI related folders\\IR CS221_\\new run multithreaded\\stopwords.txt";
+//		String file2="C:\\Users\\SAISUNDAR\\Google Drive\\UCI related folders\\IR CS221_\\Project 3\\Title.txt";
+		String file = "E:\\books\\UCI\\Information Retrieval\\Projects\\project3\\IRdata.txt";
+		String file1 = "E:\\books\\UCI\\Information Retrieval\\Projects\\project3\\stopwords.txt";
+		String file2 = "E:\\books\\UCI\\Information Retrieval\\Projects\\project3\\Title.txt";
 		BufferedReader in = new BufferedReader(new FileReader(file));
 		BufferedReader in1 = new BufferedReader(new FileReader(file1));
 		String line;

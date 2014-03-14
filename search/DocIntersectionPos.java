@@ -37,9 +37,9 @@ public class DocIntersectionPos {
 	return false;	
 	}
 	
-	void incScore()
+	void incScore(HashMap<Integer, Float> docScoreInputMap)
 	{
-		HashMap<Integer, Float> docScoreMap= search.SearchEngine.docScoreMap;
+		HashMap<Integer, Float> docScoreMap= docScoreInputMap;
 		if(docScoreMap.containsKey(docId))
 		{
 			
