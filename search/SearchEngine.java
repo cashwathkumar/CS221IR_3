@@ -99,7 +99,13 @@ public class SearchEngine extends Indexer{
 		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String query = s.getQuery(br);
-	
+		
+		
+		
+		//dummy
+		
+		
+		//
 		for(int i = 0;!query.equals("exit");query = s.getQuery(br), i++)
 		{
 			
@@ -190,9 +196,12 @@ public class SearchEngine extends Indexer{
 		
 	private void rankDocs(String input)
 	{
-		String query = input.toLowerCase();
+		String query = input;
+		if(!isUpper(input)) {
+			query = input.toLowerCase();
+		}
 		
-		String[] tokens = query.split("[^a-z0-9]+");
+		String[] tokens = query.split("[^a-zA-Z0-9]+");
 		
 		tokens=removeStopWords(tokens);
 		
@@ -290,6 +299,7 @@ public class SearchEngine extends Indexer{
 		
 		Set<Integer> docs = docScoreMap.keySet();
 		
+		
 		int resultSize = 0;
 		
 		/* Get the top documents*/
@@ -332,8 +342,9 @@ public class SearchEngine extends Indexer{
 	{
 		for(int i = 0; i < dResults.length; i++)
 		{	
-			System.out.println(dResults[i].getTitle());
+			//System.out.println(dResults[i].getTitle());
 			System.out.println(dResults[i].getUrl());
+			
 		}
 	}
 	
