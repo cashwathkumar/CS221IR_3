@@ -117,6 +117,10 @@ public class Indexer {
 				docIdStr = docIdStr.substring(6);	// 6 - position to extract docid
 				docId = Integer.parseInt(docIdStr);
 				url = in.readLine();
+				if(url.endsWith("/"))
+				{
+					url = url.substring(0, url.length() - 1);
+				}
 				in.readLine();	// unwanted info
 				in.readLine();	// unwanted info
 				position = 0;
