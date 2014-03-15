@@ -15,14 +15,15 @@ import java.util.Set;
 import java.lang.Math;
 public class Indexer {
 	
-	public static HashMap<String, Payload> wordIndex = new HashMap<String, Payload>();
-	public static HashMap<Integer, UrlInfo> urlIndex = new HashMap<Integer, UrlInfo>();
+	public HashMap<String, Payload> wordIndex = new HashMap<String, Payload>();
+	public HashMap<Integer, UrlInfo> urlIndex = new HashMap<Integer, UrlInfo>();
 	
 	public static final String delimiter = "!@#$%^&*()_+";
-	public static HashSet<String> stopWords=new HashSet<String>();
+	public HashSet<String> stopWords=new HashSet<String>();
 	public static void main(String args[]) throws IOException
 	{
-		readFromFile();
+		Indexer i = new Indexer();
+		i.readFromFile();
 		
 		String[] words={"eppstein","computer","words","retrieval","fall","xianghua", "information", "software", "engineering", "machine", "learning"};
 		
@@ -32,7 +33,7 @@ public class Indexer {
 			System.out.println("=====================");
 			System.out.println(" looking up word \" "+w+"\"");
 			
-			Payload p=wordIndex.get(w);
+			Payload p= i.wordIndex.get(w);
 			if(p!=null)
 			{
 				System.out.println("idf="+p.idf);
@@ -44,7 +45,7 @@ public class Indexer {
 				{
 					if(count--==0)break;
 					
-					System.out.println(" =========== url +++ \""+(urlIndex.get(temp.docId).getUrl())+"\"");
+					System.out.println(" =========== url +++ \""+(i.urlIndex.get(temp.docId).getUrl())+"\"");
 					System.out.println("================ freq of word within url + "+temp.freq);
 				}
 				
@@ -55,13 +56,13 @@ public class Indexer {
 				System.out.println("nothin.....");
 		}
 		
-		System.out.println("Size of word index="+wordIndex.size());
-		System.out.println("Size of URL index "+urlIndex.size());
+		System.out.println("Size of word index="+ i.wordIndex.size());
+		System.out.println("Size of URL index "+ i.urlIndex.size());
 		
-		serializeToOutput();
+		i.serializeToOutput();
 	}
 	
-	private static void serializeToOutput() throws IOException
+	private void serializeToOutput() throws IOException
 	{
 		FileOutputStream wOut = new FileOutputStream("Windex");
 		FileOutputStream uOut = new FileOutputStream("Uindex");
@@ -80,7 +81,7 @@ public class Indexer {
 		uOut.close();	
 	}
 	
-	public static void readFromFile() throws IOException
+	public void readFromFile() throws IOException
 	{
 //		String file="C:\\Users\\SAISUNDAR\\Google Drive\\UCI related folders\\IR CS221_\\new run multithreaded\\IRdata.txt";
 //		String file1="C:\\Users\\SAISUNDAR\\Google Drive\\UCI related folders\\IR CS221_\\new run multithreaded\\stopwords.txt";
@@ -229,7 +230,7 @@ public class Indexer {
 		in.close();
 		in1.close();
 	}
-	private static void addToWordIndexTitle(String token, int docId)
+	private void addToWordIndexTitle(String token, int docId)
 	{
 		Payload payload;
 		
@@ -248,12 +249,12 @@ public class Indexer {
 		wordIndex.put(token, payload);
 				
 	}
-	private static void addToURLIndex(int docId, UrlInfo urlInfo)
+	private void addToURLIndex(int docId, UrlInfo urlInfo)
 	{
 		urlIndex.put(docId, urlInfo);
 	}
 	
-	private static void addToWordIndex(String token, int docId, int pos)
+	private void addToWordIndex(String token, int docId, int pos)
 	{
 		Payload payload;
 		

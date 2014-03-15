@@ -71,7 +71,12 @@ public class SearchEngine extends Indexer{
 	public static void main(String args[]) throws IOException
 	{
 		SearchEngine s = new SearchEngine();
-		s.loadIndex();
+		Indexer in = new Indexer();
+		in.readFromFile();
+		
+		s.wordIndex = in.wordIndex;
+		s.urlIndex = in.urlIndex;
+		
 		System.out.println("length of word index"+s.wordIndex.size());
 		System.out.println("length of word index"+s.urlIndex.size());
 		
