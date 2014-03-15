@@ -249,7 +249,7 @@ public class SearchEngine extends Indexer{
 				{
 					score = docScoreMap.get(docId);
 					score *= idf*(1+(10/urlIndex.get(docId).getTitle().length()));
-					score *= idf*(1+(10/urlIndex.get(docId).getUrl().length()));
+					score *= (1+(10/urlIndex.get(docId).getUrl().length()));
 					docScoreMap.put(docId, score);
 				}
 				//no need for else part , if no doc is tere it means none of the words are there, but the title is there==>dubious link
