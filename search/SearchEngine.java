@@ -68,6 +68,21 @@ public class SearchEngine extends Indexer{
 //		readFromFile();
 	}
 	
+	public void buildIndex()
+	{
+		Indexer in = new Indexer();
+		
+		try {
+			in.readFromFile();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		this.wordIndex = in.wordIndex;
+		this.urlIndex = in.urlIndex;
+	}
+	
 	public static void main(String args[]) throws IOException
 	{
 		SearchEngine s = new SearchEngine();
