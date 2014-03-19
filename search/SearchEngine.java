@@ -21,8 +21,8 @@ import java.lang.Math;
 import java.util.ArrayList;
 public class SearchEngine extends Indexer{
 
-	private HashMap<String, Payload> wordIndex = new HashMap<String, Payload>();
-	private HashMap<Integer, UrlInfo> urlIndex = new HashMap<Integer, UrlInfo>();
+	public HashMap<String, Payload> wordIndex = new HashMap<String, Payload>();
+	public HashMap<Integer, UrlInfo> urlIndex = new HashMap<Integer, UrlInfo>();
 	
 	public HashMap<Integer, Float> docScoreMap = new HashMap<Integer, Float>();
 	
@@ -164,6 +164,7 @@ public class SearchEngine extends Indexer{
 		
 		Payload t1P = wordIndex.get(t1);
 		Payload t2P = wordIndex.get(t2);
+		int offset;
 		
 		if(t1P==null||t2P==null)return;
 		
@@ -185,9 +186,12 @@ public class SearchEngine extends Indexer{
 				temp.docId=docID1;
 				temp.posWord1=t1L.get(p1).getPos();
 				temp.posWord2=t2L.get(p2).getPos();
-				if(temp.checkIncreaseScore())
+				if((offset=temp.checkIncreaseScore())!=-1 )
+				{
 					temp.incScore(this.docScoreMap);
-				
+					UrlInfo dummy=urlIndex.get(temp.docId);
+					dummy.setOffset(offset);
+				}
 				p1++;p2++;
 		
 			}
@@ -330,9 +334,12 @@ public class SearchEngine extends Indexer{
 		for(int i = topDocs.size() - 1; !topDocs.isEmpty(); i--)
 		{
 			DocScore dscore = topDocs.poll();
+			UrlInfo temp=urlIndex.get(dscore.docId);
+			dResults[i] = new DocResult(temp.getTitle(),
+					temp.getUrl(),temp.getOffSet(),dscore.docId);
 			
-			dResults[i] = new DocResult(urlIndex.get(dscore.docId).getTitle(),
-					urlIndex.get(dscore.docId).getUrl());
+			
+			
 		}
 		
 		return dResults;

@@ -8,6 +8,7 @@ public class UrlInfo implements Serializable
 	private int length;
 	private int titleLength;
 	private String title;
+	int offset;
 	static final long serialVersionUID=2;
 	
 	UrlInfo(String url, int length)
@@ -15,6 +16,7 @@ public class UrlInfo implements Serializable
 		this.url = url;
 		this.length = length;
 		title=null;
+		offset=0;
 	}
 	
 	public void setTitle(String tit)
@@ -37,4 +39,16 @@ public class UrlInfo implements Serializable
 		
 		return length;
 	}
+	public void setOffset(int off)
+	{
+		
+		offset=off;
+		System.out.println("offst set");
+	}
+	public int getOffSet()
+	{
+		
+		return offset;
+	}
+	
 }
