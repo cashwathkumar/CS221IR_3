@@ -141,11 +141,11 @@ public class Indexer {
 					if(!isUpper(token)) {
 						token = token.toLowerCase();
 					}
-					
+					position++;
 					if(!stopWords.contains(token) && token.length()>2)
 					{
 						addToWordIndex(token, docId, position);
-						position++;
+						
 					}
 				}
 			}
